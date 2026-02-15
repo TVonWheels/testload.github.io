@@ -8,7 +8,6 @@
     html, body { margin:0; height:100%; background:#000; overflow:hidden; }
     video { position:fixed; inset:0; width:100vw; height:100vh; object-fit:cover; }
 
-    /* Small, unobtrusive click-to-sound prompt */
     #soundPrompt {
       position: fixed;
       left: 50%;
@@ -30,50 +29,4 @@
 <body>
 
   <video id="bg" autoplay loop playsinline preload="auto">
-    <source src="loading.mp4" type="video/mp4">
-  </video>
-
-  <audio id="music" loop>
-    <source src="music.mp3" type="audio/mpeg">
-  </audio>
-
-  <div id="soundPrompt" class="hidden">Click for sound</div>
-
-  <script>
-    const video = document.getElementById("bg");
-    const music = document.getElementById("music");
-    const prompt = document.getElementById("soundPrompt");
-
-    music.volume = 0.5;
-
-    async function tryStart() {
-      // Video should autoplay fine; keep it going
-      video.play().catch(()=>{});
-
-      try {
-        await music.play();
-        // If it worked, hide prompt
-        prompt.classList.add("hidden");
-      } catch (e) {
-        // Autoplay blocked → show prompt
-        prompt.classList.remove("hidden");
-      }
-    }
-
-    function userStart() {
-      music.play().catch(()=>{});
-      prompt.classList.add("hidden");
-    }
-
-    // Try immediately and keep trying (GMOD can be slow during connect)
-    tryStart();
-    const t = setInterval(tryStart, 1200);
-
-    // If user interacts, start sound and stop nagging
-    prompt.addEventListener("click", () => { userStart(); clearInterval(t); });
-    document.addEventListener("click", () => { userStart(); clearInterval(t); }, { once:true });
-    document.addEventListener("keydown", () => { userStart(); clearInterval(t); }, { once:true });
-  </script>
-
-</body>
-</html>
+    <source src="

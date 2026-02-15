@@ -1,60 +1,66 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Loading</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-    }
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: black;
+    overflow: hidden;
+}
 
-    video {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-    }
-  </style>
+video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- Background video -->
-  <video id="bg" autoplay muted loop playsinline preload="auto">
+<video id="video" autoplay loop playsinline>
     <source src="loading.mp4" type="video/mp4">
-  </video>
+</video>
 
-  <!-- Background music -->
-  <audio id="music" autoplay loop>
+<audio id="audio" loop>
     <source src="music.mp3" type="audio/mpeg">
-  </audio>
+</audio>
 
-  <script>
+<script>
 
-    // Force video play
-    const video = document.getElementById("bg");
+var video = document.getElementById("video");
+var audio = document.getElementById("audio");
+
+audio.volume = 0.5;
+
+function startEverything() {
+
+    video.muted = false;
+
     video.play().catch(()=>{});
 
-    // Force audio play (GMOD workaround)
-    const music = document.getElementById("music");
-    music.volume = 0.5;
+    audio.play().catch(()=>{});
 
-    function playMusic() {
-      music.play().catch(()=>{});
-    }
+}
 
-    playMusic();
+// run immediately
+startEverything();
 
-    document.body.addEventListener("click", playMusic);
+// run repeatedly (important for GMOD)
+setInterval(startEverything, 1000);
 
-  </script>
+// run on click fallback
+document.body.addEventListener("click", startEverything);
+
+</script>
 
 </body>
 </html>

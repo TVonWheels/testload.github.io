@@ -29,4 +29,69 @@
 <body>
 
   <video id="bg" autoplay loop playsinline preload="auto">
-    <source src="
+    <source src="loading.mp4" type="video/mp4">
+  </video>
+
+  <audio id="music" loop preload="auto">
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <div id="soundPrompt" class="hidden">Click for sound</div>
+
+  <script>
+    const video  = document.getElementById("bg");
+    const music  = document.getElementById("music");
+    const prompt = document.getElementById("soundPrompt");
+
+    music.volume = 0.5;
+
+    let audioStarted = false;
+    let trying = false;
+    let timer = null;
+
+    async function tryStartAudio() {
+      if (audioStarted || trying) return;
+      trying = true;
+
+      // Make sure we don't stack anything weird
+      try { music.pause(); } catch (e) {}
+      try { music.currentTime = 0; } catch (e) {}
+
+      try {
+        await music.play();
+        audioStarted = true;
+        prompt.classList.add("hidden");
+        if (timer) clearInterval(timer);
+      } catch (e) {
+        // Autoplay blocked → show prompt
+        prompt.classList.remove("hidden");
+      } finally {
+        trying = false;
+      }
+    }
+
+    function userStartAudioOnce() {
+      if (audioStarted) return;
+      tryStartAudio();
+    }
+
+    // Keep video going
+    function keepVideoAlive() {
+      video.play().catch(()=>{});
+    }
+
+    keepVideoAlive();
+    setInterval(keepVideoAlive, 1500);
+
+    // Try audio on load, then retry until it succeeds or user clicks
+    tryStartAudio();
+    timer = setInterval(tryStartAudio, 1500);
+
+    // User gesture: start audio once
+    prompt.addEventListener("click", userStartAudioOnce);
+    document.addEventListener("click", userStartAudioOnce, { once: true });
+    document.addEventListener("keydown", userStartAudioOnce, { once: true });
+  </script>
+
+</body>
+</html>

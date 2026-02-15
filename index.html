@@ -16,7 +16,7 @@
       inset: 0;
       width: 100vw;
       height: 100vh;
-      object-fit: cover; /* fills screen like GTA */
+      object-fit: cover; /* fills screen */
     }
     .fade {
       position: fixed;
@@ -67,6 +67,11 @@
     <source src="loading.mp4" type="video/mp4" />
   </video>
 
+  <!-- Put your MP3 in the same folder and name it music.mp3 -->
+  <audio id="music" autoplay loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="fade"></div>
 
   <div class="bottom">
@@ -78,14 +83,24 @@
   <script>
     // Some clients are picky about autoplay: try again on load.
     const v = document.getElementById('bg');
-    v.play().catch(()=>{});
+    v.play().catch(() => {});
+
+    // Audio autoplay may be blocked: try, then fall back to "click to start".
+    const music = document.getElementById("music");
+    music.volume = 0.5;
+
+    music.play().catch(() => {
+      document.body.addEventListener("click", () => {
+        music.play().catch(()=>{});
+      }, { once: true });
+    });
 
     // Rotating “GTA-ish” tips
     const tips = [
-      "Tip: Stay in cover, peek smart.",
       "Tip: Type !help for commands.",
       "Tip: Join our Discord for updates.",
-      "Tip: Lower video settings if you stutter."
+      "Tip: Lower settings if you stutter.",
+      "Tip: Be nice or get cooked."
     ];
     let i = 0;
     const tipEl = document.getElementById('tip');

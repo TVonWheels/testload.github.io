@@ -69,4 +69,50 @@
     }
 
     keepVideoAlive();
-    setInterval(keepVideoAlive, 1500
+    setInterval(keepVideoAlive, 1500);
+
+
+    // Audio system
+    let started = false;
+    let retryTimer = null;
+
+    async function startAudio() {
+
+      if (started) return;
+
+      try {
+
+        await music.play();
+
+        started = true;
+
+        prompt.classList.add("hidden");
+
+        if (retryTimer)
+          clearInterval(retryTimer);
+
+      }
+      catch {
+
+        prompt.classList.remove("hidden");
+
+      }
+
+    }
+
+
+    // Try automatically
+    startAudio();
+
+    retryTimer = setInterval(startAudio, 1500);
+
+
+    // Start on click
+    document.addEventListener("click", startAudio, { once: true });
+
+    prompt.addEventListener("click", startAudio);
+
+  </script>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -22,9 +22,10 @@
 </head>
 <body>
 
-  <!-- Video is ALWAYS muted so it never doubles the audio -->
-  <video id="bg" autoplay loop playsinline preload="auto" muted>
-    <source src="Loading(1).mp4" type="video/mp4">
+  <!-- Video ALWAYS muted. WEBM first for GMOD, MP4 fallback for browsers. -->
+  <video id="bg" autoplay loop playsinline muted preload="auto">
+    <source src="loading.webm" type="video/webm">
+    <source src="loading.mp4"  type="video/mp4">
   </video>
 
   <audio id="music" loop preload="auto">
@@ -40,16 +41,17 @@
 
     music.volume = 0.5;
 
-    let audioStarted = false;
-    let trying = false;
-    let timer = null;
-
-    // keep video playing (muted)
+    // Keep video alive (GMOD loading browser can be flaky)
     function keepVideoAlive() {
       video.play().catch(()=>{});
     }
     keepVideoAlive();
     setInterval(keepVideoAlive, 1500);
+
+    // Audio: try autoplay; if blocked, show prompt; start once.
+    let audioStarted = false;
+    let trying = false;
+    let timer = null;
 
     async function tryStartAudio() {
       if (audioStarted || trying) return;

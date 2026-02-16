@@ -1,33 +1,54 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Loading</title>
-  <style>
-    html, body { margin:0; height:100%; background:#000; overflow:hidden; }
-    video { position:fixed; inset:0; width:100vw; height:100vh; object-fit:cover; }
 
-    #soundPrompt{
-      position:fixed; left:50%; bottom:28px; transform:translateX(-50%);
-      padding:10px 14px; border-radius:999px;
-      background:rgba(0,0,0,.55); color:#fff;
-      font:14px/1.2 Arial,sans-serif;
-      text-shadow:0 2px 10px rgba(0,0,0,.9);
-      border:1px solid rgba(255,255,255,.18);
-      cursor:pointer; user-select:none;
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
     }
-    #soundPrompt.hidden{ display:none; }
+
+    video {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+
+    #soundPrompt {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.55);
+      color: #fff;
+      font: 14px Arial;
+      border: 1px solid rgba(255,255,255,.18);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #soundPrompt.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Video ALWAYS muted. WEBM first for GMOD, MP4 fallback for browsers. -->
-  <video id="bg" autoplay loop playsinline muted preload="auto">
+  <!-- WEBM video ONLY -->
+  <video id="bg" autoplay loop muted playsinline preload="auto">
     <source src="loading.webm" type="video/webm">
-    <source src="loading.mp4"  type="video/mp4">
   </video>
 
+  <!-- Music -->
   <audio id="music" loop preload="auto">
     <source src="music.mp3" type="audio/mpeg">
   </audio>
@@ -35,53 +56,17 @@
   <div id="soundPrompt" class="hidden">Click for sound</div>
 
   <script>
+
     const video  = document.getElementById("bg");
     const music  = document.getElementById("music");
     const prompt = document.getElementById("soundPrompt");
 
     music.volume = 0.5;
 
-    // Keep video alive (GMOD loading browser can be flaky)
+    // Keep video playing (important for GMOD)
     function keepVideoAlive() {
       video.play().catch(()=>{});
     }
+
     keepVideoAlive();
-    setInterval(keepVideoAlive, 1500);
-
-    // Audio: try autoplay; if blocked, show prompt; start once.
-    let audioStarted = false;
-    let trying = false;
-    let timer = null;
-
-    async function tryStartAudio() {
-      if (audioStarted || trying) return;
-      trying = true;
-
-      try {
-        await music.play();
-        audioStarted = true;
-        prompt.classList.add("hidden");
-        if (timer) clearInterval(timer);
-      } catch (e) {
-        prompt.classList.remove("hidden");
-      } finally {
-        trying = false;
-      }
-    }
-
-    function userStartOnce() {
-      if (audioStarted) return;
-      tryStartAudio();
-      if (timer) clearInterval(timer);
-    }
-
-    tryStartAudio();
-    timer = setInterval(tryStartAudio, 1500);
-
-    prompt.addEventListener("click", userStartOnce);
-    document.addEventListener("click", userStartOnce, { once: true });
-    document.addEventListener("keydown", userStartOnce, { once: true });
-  </script>
-
-</body>
-</html>
+    setInterval(keepVideoAlive, 1500
